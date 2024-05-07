@@ -110,7 +110,7 @@ pub(crate) async fn run(
         python_env.interpreter().python_version(),
         python_env.python_executable().user_display().cyan()
     );
-    let new_path = if let Some(path) = std::env::var_os("PATH") {
+    let new_path = if let Some(path) = env::var_os("PATH") {
         let python_env_path =
             iter::once(python_env.scripts().to_path_buf()).chain(env::split_paths(&path));
         env::join_paths(python_env_path)?
@@ -153,7 +153,7 @@ struct RunEnvironment {
 fn find_workspace_requirements() -> Result<Option<Vec<RequirementsSource>>> {
     // TODO(zanieb): Add/use workspace logic to load requirements for a workspace
     // We cannot use `Workspace::find` yet because it depends on a `[tool.uv]` section
-    let pyproject_path = std::env::current_dir()?.join("pyproject.toml");
+    let pyproject_path = env::current_dir()?.join("pyproject.toml");
     if pyproject_path.exists() {
         debug!(
             "Loading requirements from {}",
@@ -264,7 +264,7 @@ async fn environment_for_run(
 
     // Create a virtual environment
     // TODO(zanieb): Move this path derivation elsewhere
-    let uv_state_path = std::env::current_dir()?.join(".uv");
+    let uv_state_path = env::current_dir()?.join(".uv");
     fs_err::create_dir_all(&uv_state_path)?;
     let tmpdir = tempdir_in(uv_state_path)?;
     let venv = uv_virtualenv::create_venv(
@@ -394,9 +394,6 @@ async fn environment_for_run(
         Ok(resolution) => Resolution::from(resolution),
         Err(err) => return Err(err.into()),
     };
-
-    // Re-initialize the in-flight map.
-    let in_flight = InFlight::default();
 
     // Sync the environment.
     install(
