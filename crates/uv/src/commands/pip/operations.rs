@@ -22,8 +22,8 @@ use pypi_types::Requirement;
 use uv_cache::Cache;
 use uv_client::{BaseClientBuilder, RegistryClient};
 use uv_configuration::{
-    Concurrency, Constraints, ExtrasSpecification, NoBinary, Overrides, PreviewMode, Reinstall,
-    Upgrade,
+    Concurrency, Constraints, ExtrasSpecification, NoBinary, NoBuild, Overrides, PreviewMode,
+    Reinstall, Upgrade,
 };
 use uv_dispatch::BuildDispatch;
 use uv_distribution::DistributionDatabase;
@@ -288,6 +288,7 @@ pub(crate) async fn install(
     modifications: Modifications,
     reinstall: &Reinstall,
     no_binary: &NoBinary,
+    no_build: &NoBuild,
     link_mode: LinkMode,
     compile: bool,
     index_urls: &IndexLocations,
@@ -315,6 +316,7 @@ pub(crate) async fn install(
             site_packages,
             reinstall,
             no_binary,
+            no_build,
             hasher,
             index_urls,
             cache,
