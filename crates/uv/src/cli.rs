@@ -1991,6 +1991,10 @@ pub(crate) enum ToolchainCommand {
 
     /// Download and install a specific toolchain.
     Install(ToolchainInstallArgs),
+
+    /// Search for a toolchain
+    #[command(disable_version_flag = true)]
+    Find(ToolchainFindArgs),
 }
 
 #[derive(Args)]
@@ -2012,6 +2016,18 @@ pub(crate) struct ToolchainInstallArgs {
     ///
     /// If not provided, the latest available version will be installed.
     pub(crate) target: Option<String>,
+}
+
+#[derive(Args)]
+#[allow(clippy::struct_excessive_bools)]
+pub(crate) struct ToolchainFindArgs {
+    /// The version to find.
+    #[arg(long)]
+    pub(crate) version: Option<String>,
+
+    /// The implementation to find.
+    #[arg(long)]
+    pub(crate) implementation: Option<String>,
 }
 
 #[derive(Args)]
