@@ -1,3 +1,4 @@
+use pep440_rs::Version;
 use tracing::{debug, info};
 use uv_client::BaseClientBuilder;
 use uv_configuration::PreviewMode;
@@ -21,6 +22,15 @@ pub struct Toolchain {
 }
 
 impl Toolchain {
+    /// Create a new [`Toolchain`] from a source, interpreter tuple.
+    pub(crate) fn from_tuple(tuple: (ToolchainSource, Interpreter)) -> Self {
+        let (source, interpreter) = tuple;
+        Self {
+            source,
+            interpreter,
+        }
+    }
+
     /// Find an installed [`Toolchain`].
     ///
     /// This is the standard interface for discovering a Python toolchain for use with uv.
@@ -186,6 +196,22 @@ impl Toolchain {
 
     pub fn interpreter(&self) -> &Interpreter {
         &self.interpreter
+    }
+
+    pub fn python_version(&self) -> &Version {
+        self.interpreter.python_version()
+    }
+
+    pub fn key(&self) -> String {
+        // TODO(zanieb): Determine libc and include
+        format!(
+            "{}-{}-{}-{}",
+            self.interpreter.implementation_name(),
+            self.python_version(),
+            self.interpreter.platform().os(),
+            self.interpreter.platform().arch(),
+        )
+        .to_ascii_lowercase()
     }
 
     pub fn into_interpreter(self) -> Interpreter {
