@@ -54,14 +54,16 @@ impl Urls {
                     }
                 }
                 RequirementSource::Path {
-                    path,
+                    install_path,
+                    lock_path,
                     editable,
                     url,
                 } => {
                     let url = VerbatimParsedUrl {
                         parsed_url: ParsedUrl::Path(ParsedPathUrl {
                             url: url.to_url(),
-                            path: path.clone(),
+                            install_path: install_path.clone(),
+                            lock_path: lock_path.clone(),
                             editable: *editable,
                         }),
                         verbatim: url.clone(),
@@ -74,7 +76,9 @@ impl Urls {
                         {
                             // On Windows, we can have two versions of the same path, e.g.
                             // `C:\Users\KONSTA~1` and `C:\Users\Konstantin`.
-                            if is_same_file(path, &previous_path.path).unwrap_or(false) {
+                            if is_same_file(install_path, &previous_path.install_path)
+                                .unwrap_or(false)
+                            {
                                 continue;
                             }
                         }

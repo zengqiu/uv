@@ -310,7 +310,11 @@ impl PubGrubRequirement {
                     version: Range::full(),
                 })
             }
-            RequirementSource::Path { url, path, .. } => {
+            RequirementSource::Path {
+                url,
+                install_path: path,
+                ..
+            } => {
                 let Some(expected) = urls.get(&requirement.name) else {
                     return Err(ResolveError::DisallowedUrl(
                         requirement.name.clone(),
@@ -327,7 +331,7 @@ impl PubGrubRequirement {
                     {
                         // On Windows, we can have two versions of the same path, e.g.
                         // `C:\Users\KONSTA~1` and `C:\Users\Konstantin`.
-                        if is_same_file(path, &previous_path.path).unwrap_or(false) {
+                        if is_same_file(path, &previous_path.install_path).unwrap_or(false) {
                             is_allowed = true;
                         }
                     }
